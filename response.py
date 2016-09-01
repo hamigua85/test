@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*- 
 from utils import init_wechat_sdk
 from sqlite import *
-import re
+import re,os
 
-DataBasePath = '/var/www/test/UserInfo.db'
+curentpath = os.getcwd()
+DataBasePath = curentpath + '/test/UserInfo.db'
 
 def wechat_response(data):
     global message, openid, wechat

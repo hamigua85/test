@@ -9,10 +9,12 @@ from sqlite import *
 import threading
 import socket,select
 from utils import init_wechat_sdk
-
+import os
+import time
 app = Flask(__name__)
 
-DataBasePath = '/var/www/test/UserInfo.db'
+curentpath = os.getcwd()
+DataBasePath = curentpath + '/test/UserInfo.db'
 
 
 def tcp_listening():
@@ -60,10 +62,32 @@ def send_weixin_msg_to_user(data):
     print openid
     try:
         if openid != None:
-            result = wechat.send_text_message(str(openid), content)
-            result = wechat.send_text_message('oy8lNv-rbwOzC4QoiTKjVvJ2ISsc', str(openid) + ' family lack of water')
+            result = wechat.send_template_message(str(openid),"Sh1SCvFf3csFGpqwBGZM5Q27n99ZJF2njPijyY59DPA", wechat_template_message())
+            #result = wechat.send_text_message(str(openid), content)
+            #result = wechat.send_text_message("oy8lNv-rbwOzC4QoiTKjVvJ2ISsc", str(openid) + ' family lack of water')
     except Exception,e:
         print e
+
+def wechat_template_message():
+    data = {
+                "first": {
+                    "value": "主人，家里缺水了。",
+                    "color": "#173177"
+                },
+                "keyword1":{
+                    "value": "云南山泉",
+                    "color": "#173177"
+                },
+                "keyword2": {
+                    "value": time.strftime('%Y-%m-%d %X',(time.localtime())),
+                    "color": "#173177"
+                },
+                "remark":{
+                    "value": "我们将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N",
+                    "color": "#173177"
+                }
+            }
+    return data
 
 
 @app.route('/',methods=['POST', 'GET'])
@@ -78,4 +102,4 @@ def handle_wechat_request():
         return request.args.get('echostr', '')
 
 if __name__ == '__main__':
-    app.run(host='192.168.1.201', port=80, debug=False)
+    app.run(host='127.0.0.1', port=8000, debug=False)
