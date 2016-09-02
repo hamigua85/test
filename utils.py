@@ -32,13 +32,13 @@ def init_wechat_sdk():
                           appid="wx90e00269b4fcf1da",
                           appsecret="72a8ceb65843072e7c5fa01e1f3ce21b",
                           access_token=access_token,
-                          encrypt_mode="safe",
+                          encrypt_mode="normal",
                           access_token_expires_at=redis.ttl("wechat:access_token"))
         wechat = WechatBasic(conf=conf)
     else:
         conf = WechatConf(token="sjqn",
                           appid="wx90e00269b4fcf1da",
-                          encrypt_mode="safe",
+                          encrypt_mode="normal",
                           appsecret="72a8ceb65843072e7c5fa01e1f3ce21b")
         wechat = WechatBasic(conf=conf)
         access_token = wechat.get_access_token()
