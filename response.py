@@ -4,7 +4,7 @@ from sqlite import *
 import re,os
 
 curentpath = os.getcwd()
-DataBasePath = curentpath + '/test/UserInfo.db'
+DataBasePath = curentpath + '/UserInfo.db'
 
 def wechat_response(data):
     global message, openid, wechat

@@ -40,7 +40,5 @@ def init_wechat_sdk():
                           appsecret="72a8ceb65843072e7c5fa01e1f3ce21b")
         wechat = WechatBasic(conf=conf)
         access_token = wechat.get_access_token()
-        print 'new'
         redis.set("wechat:access_token",access_token['access_token'],7000)
-    print access_token
     return wechat

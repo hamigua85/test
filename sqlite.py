@@ -51,11 +51,12 @@ def queryOpenID(path,sn):
     try:
         result = cur.execute("select * from UserInfo where SN = '%s'" %str(sn))
         result = cur.fetchall()
-        if len(result) != 1:
-            return None
+        if len(result) >= 1:
+            DB.close()
+            return result
     except Exception , e:
         print e
         DB.close()
         return None
     DB.close()
-    return result[0][0]
+    return None
