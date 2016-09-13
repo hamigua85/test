@@ -41,12 +41,14 @@ def tcp_listening():
                     disconnected = not data
                 except Exception, e:
                     disconnected = True
-
-                if disconnected:
-                    print r.getpeername(), 'disconnected'
-                    inputs.remove(r)
-                else:
-                    print data #打印接收到的数据
+                try:
+                    if disconnected:
+                        print r.getpeername(), 'disconnected'
+                        inputs.remove(r)
+                    else:
+                        print data #打印接收到的数据
+                except Exception, e:
+                    print e
   
 t = threading.Thread(target=tcp_listening)
 t.start()  
