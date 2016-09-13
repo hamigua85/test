@@ -26,30 +26,27 @@ def tcp_listening():
       
     inputs = [s]  
     while True:
-        try:
-            rs, ws, es = select.select(inputs, [], []) #使用select方法
-            for r in rs:
-                if r is s:
-                    c, addr = s.accept() #处理连接
-                    print 'Get connection from', addr
-                    inputs.append(c)
-                else:
-                    try:
-                        data = r.recv(1024) #接收数据
-                        if data != "":
-                            data = str(data).strip()
-                            send_weixin_msg_to_user(data)
-                        disconnected = not data
-                    except socket.error:
-                        disconnected = True
+        rs, ws, es = select.select(inputs, [], []) #使用select方法
+        for r in rs:
+            if r is s:
+                c, addr = s.accept() #处理连接
+                print 'Get connection from', addr
+                inputs.append(c)
+            else:
+                try:
+                    data = r.recv(1024) #接收数据
+                    if data != "":
+                        data = str(data).strip()
+                        send_weixin_msg_to_user(data)
+                    disconnected = not data
+                except Exception, e:
+                    disconnected = True
 
-                    if disconnected:
-                        print r.getpeername(), 'disconnected'
-                        inputs.remove(r)
-                    else:
-                        print data #打印接收到的数据
-        except Exception,e:
-            print e
+                if disconnected:
+                    print r.getpeername(), 'disconnected'
+                    inputs.remove(r)
+                else:
+                    print data #打印接收到的数据
   
 t = threading.Thread(target=tcp_listening)
 t.start()  
