@@ -8,7 +8,7 @@ from response import wechat_response
 from sqlite import *
 import threading
 import socket,select
-from utils import init_wechat_sdk
+from utils import *
 import os
 import time
 app = Flask(__name__)
@@ -53,15 +53,18 @@ t.start()
 
 
 def send_weixin_msg_to_user(data):
-    openids = queryOpenID(DataBasePath,data)
-    wechat = init_wechat_sdk()
-    content = u"主人，家里缺水了，我将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N"
-    try:
-        if openids != None:
-            for openid in openids:
-                result = wechat.send_template_message(str(openid[0]),"Sh1SCvFf3csFGpqwBGZM5Q27n99ZJF2njPijyY59DPA", wechat_template_message())
-    except Exception,e:
-        print e
+    sn = redis.get(data)
+    if sn == None:
+        redis.set(data,data,3600)
+        openids = queryOpenID(DataBasePath,data)
+        wechat = init_wechat_sdk()
+        content = u"主人，家里缺水了，我将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N"
+        try:
+            if openids != None:
+                for openid in openids:
+                    result = wechat.send_template_message(str(openid[0]),"Sh1SCvFf3csFGpqwBGZM5Q27n99ZJF2njPijyY59DPA", wechat_template_message())
+        except Exception,e:
+            print e
 
 def wechat_template_message():
     data = {
