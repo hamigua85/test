@@ -1,21 +1,18 @@
-# -*- coding:utf-8 -*- 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from datetime import datetime
-from flask import render_template
-from flask import render_template, request, jsonify, Flask, redirect, url_for
+from . import app,redis
 from utils import check_signature
 from response import wechat_response
-from sqlite import *
+from accessDataBase import *
 import threading
 import socket,select
 from utils import *
 import os
 import time
-app = Flask(__name__)
 
 curentpath = os.getcwd()
 DataBasePath = curentpath + '/UserInfo.db'
-
 
 def tcp_listening():
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)  #生成socket对象
@@ -53,29 +50,27 @@ def tcp_listening():
 t = threading.Thread(target=tcp_listening)
 t.start()  
 
-
 def send_weixin_msg_to_user(data):
     sn = redis.get(data)
     if sn == None:
         redis.set(data,data,3600)
         openids = queryOpenID(DataBasePath,data)
         wechat = init_wechat_sdk()
-        content = u"主人，家里缺水了，我将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N"
         try:
             if openids != None:
                 for openid in openids:
-                    result = wechat.send_template_message(str(openid[0]),"Sh1SCvFf3csFGpqwBGZM5Q27n99ZJF2njPijyY59DPA", wechat_template_message())
+                    result = wechat.send_template_message(str(openid[0]),app.config['WEIXIN_TEMPLATE_MSG_ID'], wechat_template_message())
         except Exception,e:
             print e
 
 def wechat_template_message():
     data = {
                 "first": {
-                    "value": "主人，家里缺水了。",
+                    "value": app.config['WEIXIN_TEMPLATE_MSG_FIRST'],
                     "color": "#173177"
                 },
                 "keyword1":{
-                    "value": "云南山泉",
+                    "value": app.config['WEIXIN_TEMPLATE_MSG_KEYWORD1'],
                     "color": "#173177"
                 },
                 "keyword2": {
@@ -83,7 +78,7 @@ def wechat_template_message():
                     "color": "#173177"
                 },
                 "remark":{
-                    "value": "我们将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N",
+                    "value": app.config['WEIXIN_TEMPLATE_MSG_REMARK'],
                     "color": "#173177"
                 }
             }
@@ -100,6 +95,3 @@ def handle_wechat_request():
         return wechat_response(request.data)
     else:
         return request.args.get('echostr', '')
-
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8000, debug=False)

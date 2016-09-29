@@ -1,6 +1,8 @@
-# -*- coding:utf-8 -*- 
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from main import app
 from utils import init_wechat_sdk
-from sqlite import *
+from accessDataBase import *
 import re,os
 
 curentpath = os.getcwd()
@@ -40,11 +42,13 @@ def text_resp():
         "szxm": set_user_name,
         "szdz": set_user_address,
         "szdh": set_user_phone_number,
-        "bdsn": binding_sn
+        "bdsn": binding_sn,
+        "sssj": water_delivery_time,
+        "n"   : cancel_delivery
     }
     response = 'UnkownCommand'
     for key_word in commands:
-        if re.match(key_word,message.content):
+        if re.match(key_word,str(message.content).lower()):
             response = commands[key_word]()
             break
     return response
@@ -65,7 +69,7 @@ def click_resp():
     return response
 
 def subscribe():
-    content =u"您好，欢迎来到世纪青年送水站！"
+    content = app.config['WELCOME_TEXT']
     data = []
     insertDataInDB(DataBasePath,message)
     return wechat.response_text(content)
@@ -133,7 +137,7 @@ def account_recharge():
 
 def command_info():
     """命令说明"""
-    content = u"输入：szxm + 姓名，设置用户名称\r\n输入：szdz + 地址，设置用户地址\r\n输入：szdh + 电话，设置用户电话\r\n输入：bdsn + SN号码，设置用户SN\r\n"
+    content = app.config['COMMAND_INFO']
     return wechat.response_text(content)
 
 def member_activity():
@@ -143,5 +147,22 @@ def member_activity():
 
 def failure_report():
     """故障报修"""
-    content = u"请拨打12345热线，报修故障"
+    content = app.config["FAILURE_REPORT"]
+    return wechat.response_text(content)
+
+def water_delivery_time():
+    """送水时间"""
+    hour = message.content[4:6]
+    minute = message.content[6:8]
+    content = ""
+    if len(message.content) < 9 and int(hour) >=0 and int(hour) <= 23 and int(minute) >=0 and int(minute) <=59:
+        content = app.config["WATER_DELIVERY_TIME"] %(int(hour),int(minute))
+        #content = u"主人，您的预约已收到，我们将在 %02d:%02d 为您送达。" % (int(hour),int(minute))
+    else:
+        content = app.config["WATER_DELIVERY_TIME_EER"]
+    return wechat.response_text(content)
+
+def cancel_delivery():
+    """取消送水"""
+    content = app.config["CANCEL_DELIVERY"]
     return wechat.response_text(content)

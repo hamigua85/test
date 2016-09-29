@@ -1,9 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from wechat_sdk import WechatBasic,WechatConf
 from functools import wraps
+from . import app,redis
 from flask import request, redirect
-from redis import Redis
-
-redis = Redis()
 
 def check_signature(func):
     @wraps(func)
@@ -28,18 +28,18 @@ def check_signature(func):
 def init_wechat_sdk():
     access_token = redis.get("wechat:access_token")
     if access_token != None:
-        conf = WechatConf(token="sjqn",
-                          appid="wx90e00269b4fcf1da",
-                          appsecret="72a8ceb65843072e7c5fa01e1f3ce21b",
+        conf = WechatConf(token=app.config['TOKEN'],
+                          appid=app.config['APP_ID'],
+                          appsecret=app.config['APP_SECRET'],
                           access_token=access_token,
                           encrypt_mode="normal",
                           access_token_expires_at=redis.ttl("wechat:access_token"))
         wechat = WechatBasic(conf=conf)
     else:
-        conf = WechatConf(token="sjqn",
-                          appid="wx90e00269b4fcf1da",
+        conf = WechatConf(token=app.config['TOKEN'],
+                          appid=app.config['APP_ID'],
                           encrypt_mode="normal",
-                          appsecret="72a8ceb65843072e7c5fa01e1f3ce21b")
+                          appsecret=app.config['APP_SECRET'])
         wechat = WechatBasic(conf=conf)
         access_token = wechat.get_access_token()
         redis.set("wechat:access_token",access_token['access_token'],7000)
