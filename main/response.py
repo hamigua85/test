@@ -46,7 +46,7 @@ def text_resp():
         "sssj": water_delivery_time,
         "n"   : cancel_delivery
     }
-    response = 'UnkownCommand'
+    response = water_delivery_time()
     for key_word in commands:
         if re.match(key_word,str(message.content).lower()):
             response = commands[key_word]()
@@ -152,10 +152,10 @@ def failure_report():
 
 def water_delivery_time():
     """送水时间"""
-    hour = message.content[4:6]
-    minute = message.content[6:8]
+    hour = message.content[0:2]
+    minute = message.content[2:4]
     content = ""
-    if len(message.content) < 9 and int(hour) >=0 and int(hour) <= 23 and int(minute) >=0 and int(minute) <=59:
+    if len(message.content) < 5 and int(hour) >=0 and int(hour) <= 23 and int(minute) >=0 and int(minute) <=59:
         content = app.config["WATER_DELIVERY_TIME"] %(int(hour),int(minute))
     else:
         content = app.config["WATER_DELIVERY_TIME_EER"]

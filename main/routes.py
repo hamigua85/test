@@ -53,7 +53,7 @@ t.start()
 def send_weixin_msg_to_user(data):
     sn = redis.get(data)
     if sn == None:
-        redis.set(data,data,3600)
+        redis.set(data,data,180)
         openids = queryOpenID(DataBasePath,data)
         wechat = init_wechat_sdk()
         try:
