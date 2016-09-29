@@ -157,7 +157,6 @@ def water_delivery_time():
     content = ""
     if len(message.content) < 9 and int(hour) >=0 and int(hour) <= 23 and int(minute) >=0 and int(minute) <=59:
         content = app.config["WATER_DELIVERY_TIME"] %(int(hour),int(minute))
-        #content = u"主人，您的预约已收到，我们将在 %02d:%02d 为您送达。" % (int(hour),int(minute))
     else:
         content = app.config["WATER_DELIVERY_TIME_EER"]
     return wechat.response_text(content)

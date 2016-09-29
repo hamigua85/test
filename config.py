@@ -9,7 +9,7 @@ WELCOME_TEXT = u"您好，欢迎来到世纪青年送水站！"
 WEIXIN_TEMPLATE_MSG_ID = "Sh1SCvFf3csFGpqwBGZM5Q27n99ZJF2njPijyY59DPA"
 WEIXIN_TEMPLATE_MSG_FIRST = u"主人，家里缺水了。"
 WEIXIN_TEMPLATE_MSG_KEYWORD1 = u"云南山泉。"
-WEIXIN_TEMPLATE_MSG_REMARK = u"我们将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N",
+WEIXIN_TEMPLATE_MSG_REMARK = u"我们将为你安排送水师傅尽快送水上门，如果暂时不需要送水，请回复N"
 
 #回复信息
 COMMAND_INFO = u"szxm + 姓名，设置用户名称\r\nszdz + 地址，设置用户地址\r\nszdh + 电话，设置用户电话\r\nbdsn + SN，设置用户SN\r\n"
