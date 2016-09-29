@@ -46,11 +46,15 @@ def text_resp():
         "sssj": water_delivery_time,
         "n"   : cancel_delivery
     }
-    response = water_delivery_time()
+    UnkownCommand = True
+    response = "UnKownCommand"
     for key_word in commands:
         if re.match(key_word,str(message.content).lower()):
             response = commands[key_word]()
+            UnkownCommand = False
             break
+    if UnkownCommand == True:
+        response = water_delivery_time()
     return response
 
 
